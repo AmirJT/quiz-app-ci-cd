@@ -10,9 +10,14 @@ import apiRoutes from './api/index.js';
 
 router.use('/api', apiRoutes);
 
-// serve up react front-end in production
-router.use((_req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../../../client/dist/index.html'));
-});
+// ✅ Serve frontend correctly in production
+if (process.env.NODE_ENV === 'production') {
+  const clientPath = path.join(__dirname, '../../../client/dist');
+  router.use(express.static(clientPath));
+
+  router.get('*', (_req: Request, res: Response) => {
+    res.sendFile(path.join(clientPath, 'index.html'));
+  });
+}
 
 export default router;
